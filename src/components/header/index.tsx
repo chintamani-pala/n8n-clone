@@ -48,11 +48,11 @@ const Header = () => {
           </nav>
           {/*Desktop auth buttons*/}
           <div className="hidden md:flex item-center gap-3 animate-fade-in">
-            <Button variant="ghost" size="sm" className="hover:!text-white">
+            <Button variant="ghost" size="sm" className="hover:text-white!">
               Sign In
             </Button>
             <Button variant="hero" size="sm">
-              get Started Free
+              Get Started Free
             </Button>
           </div>
           {/*Mobile menu*/}
