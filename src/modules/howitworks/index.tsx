@@ -96,7 +96,7 @@ const HowItWorksSection = () => {
               </div>
               {/* Connection Line*/}
               {index < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-1/2  -right-4 w-8 h-0.5 bg-linear-to-r from-primary/50 to-transparent"></div>
+                <div className="hidden lg:block absolute top-1/2  -right-4 w-8 h-0.5 bg-linear-to-r from-primary/50 to-transparent" />
               )}
             </Card>
           </div>
