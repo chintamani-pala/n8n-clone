@@ -1,6 +1,8 @@
 import Header from "@/components/header";
+import FeaturesSection from "@/modules/features";
 import HeroSection from "@/modules/hero";
 import HowItWorksSection from "@/modules/howitworks";
+import TemplatesSection from "@/modules/templates";
 import React from "react";
 
 const page = () => {
@@ -9,6 +11,8 @@ const page = () => {
       <Header />
       <HeroSection />
       <HowItWorksSection />
+      <FeaturesSection />
+      <TemplatesSection />
     </div>
   );
 };

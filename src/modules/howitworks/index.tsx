@@ -73,7 +73,7 @@ const HowItWorksSection = () => {
             className="animate-fade-in"
             style={{ animationDelay: `${index * 0.2}s` }}
           >
-            <Card className="relative p-8 h-full bg-gradient-card border-primary/20 backdrop-blur-sm hover:shadow-glow-primary transition-all duration-300 group">
+            <Card className="relative p-8 h-full bg-gradient-card border-primary/20 backdrop-blur-sm hover:shadow-glow-primary transition-all duration-300 group hover:-translate-y-1">
               <div className="mb-6">
                 <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                   <step.icon className="w-8 h-8 text-primary" />
