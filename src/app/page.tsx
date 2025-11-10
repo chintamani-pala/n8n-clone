@@ -1,3 +1,4 @@
+import Footer from "@/components/footer";
 import Header from "@/components/header";
 import CTASection from "@/modules/cta";
 import FeaturesSection from "@/modules/features";
@@ -17,6 +18,7 @@ const page = () => {
       <TemplatesSection />
       <PricingSection />
       <CTASection />
+      <Footer />
     </div>
   );
 };
