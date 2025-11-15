@@ -5,6 +5,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import AuthModel from "../auth/auth.model";
 
 const navItems = [
   { name: "Features", href: "#features", icons: Zap },
@@ -15,6 +16,7 @@ const navItems = [
 ];
 
 const Header = () => {
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-primary/10">
@@ -51,7 +53,11 @@ const Header = () => {
             <Button variant="ghost" size="sm" className="hover:text-white!">
               Sign In
             </Button>
-            <Button variant="hero" size="sm">
+            <Button
+              variant="hero"
+              size="sm"
+              onClick={() => setIsAuthOpen(true)}
+            >
               Get Started Free
             </Button>
           </div>
@@ -119,6 +125,8 @@ const Header = () => {
               </div>
             </SheetContent>
           </Sheet>
+          {/*Auth Model*/}
+          <AuthModel isOpen={isAuthOpen} onOpenChange={setIsAuthOpen} />
         </div>
       </div>
     </header>
