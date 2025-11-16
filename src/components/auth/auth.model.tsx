@@ -359,7 +359,7 @@ const AuthModel = ({ isOpen, onOpenChange }: AuthModelProps) => {
                         <span className="text-muted-foreground">
                           I agree to the{" "}
                           <button className="text-primary hover:underline">
-                            Terms and Service
+                            Terms and Services
                           </button>{" "}
                           and{" "}
                           <button className="text-primary hover:underline">
