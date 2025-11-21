@@ -168,7 +168,7 @@ const Footer = () => {
               <span>Made With ❤️ for developers</span>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-primary rounded-full animate-glow-pulse"></div>
-                <span>System Status: Working</span>
+                <span>System Status: stopped</span>
               </div>
             </div>
           </div>
