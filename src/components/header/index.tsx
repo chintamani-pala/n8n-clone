@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import AuthModel from "../auth/auth.model";
+import logo from "@/assets/logo.png";
 
 const navItems = [
   { name: "Features", href: "#features", icons: Zap },
@@ -26,10 +27,11 @@ const Header = () => {
           <Link href={"/"}>
             <div className="flex items-center gap-2 animate-fade-in">
               <Image
-                src={require("@/assets/logo.png")}
-                alt=""
+                src="/logo.png"
+                alt="FlowX Logo"
                 width={200}
                 height={190}
+                className="object-contain" // improved styling
               />
             </div>
           </Link>
@@ -76,10 +78,11 @@ const Header = () => {
                 <Link href={"/"}>
                   <div className="flex items-center gap-2 animate-fade-in">
                     <Image
-                      src={require("@/assets/logo.png")}
-                      alt=""
+                      src={logo}
+                      alt="FlowX Logo"
                       width={200}
                       height={190}
+                      className="object-contain"
                     />
                   </div>
                 </Link>

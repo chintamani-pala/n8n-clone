@@ -24,7 +24,8 @@ export const auth = betterAuth({
     },
     emailVerification: {
         sendVerificationEmail: async ({ user, url, token }, request) => {
-            const finalURL = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}` + url;
+            const baseURL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+            const finalURL = `${baseURL}/verify-email?token=${token}`;
             await EmailService.sendVerificationEmail({
                 to: user.email!,
                 url: finalURL,
