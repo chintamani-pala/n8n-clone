@@ -6,11 +6,12 @@ import { DialogContent } from "../ui/dialog";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, CheckCircle } from "lucide-react";
-import { Tabs, TabsContent } from "../ui/tabs";
-import { TabsList, TabsTrigger } from "@radix-ui/react-tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 interface AuthModelProps {
   isOpen: boolean;
@@ -53,9 +54,7 @@ const AuthModel = ({ isOpen, onOpenChange }: AuthModelProps) => {
   const [validationErrors, setValidationErrors] = useState<
     Record<string, string>
   >({});
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-  };
+  const { signup, login, loading, error } = useAuth();
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
     setValidationErrors({});
@@ -63,7 +62,39 @@ const AuthModel = ({ isOpen, onOpenChange }: AuthModelProps) => {
     try {
       const validateData = signupSchema.parse(form);
       const name = `${validateData.firstName} ${validateData.lastName}`;
-    } catch (error) {}
+      const ok = await signup(name, validateData.email, validateData.password);
+      if (ok) {
+        toast.success("Check your email for activating your account")
+      }
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        const errors: Record<string, string> = {}
+        error.issues.forEach(issue => {
+          errors[issue.path[0] as string] = issue.message
+        })
+        setValidationErrors(errors)
+      }
+    }
+  }
+
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault();
+    setValidationErrors({});
+    try {
+      const validateData = loginSchema.parse(form);
+      const ok = await login(validateData.email, validateData.password);
+      if (ok) {
+        onOpenChange(false);
+      }
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        const errors: Record<string, string> = {}
+        error.issues.forEach(issue => {
+          errors[issue.path[0] as string] = issue.message
+        })
+        setValidationErrors(errors)
+      }
+    }
   }
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -209,6 +240,7 @@ const AuthModel = ({ isOpen, onOpenChange }: AuthModelProps) => {
                         type="submit"
                         className="w-full h-11 bg-gradient-primary hover:shadow-glow-primary"
                         variant={"hero"}
+                        disabled={loading}
                       >
                         Sign In
                         <ArrowRight className="ml-2 w-4 h-4" />
@@ -262,7 +294,7 @@ const AuthModel = ({ isOpen, onOpenChange }: AuthModelProps) => {
                           <Input
                             id="register-firstName"
                             type="text"
-                            value={form.firstName}
+                            value={form.lastName}
                             onChange={(e) =>
                               setForm({ ...form, lastName: e.target.value })
                             }
@@ -371,11 +403,12 @@ const AuthModel = ({ isOpen, onOpenChange }: AuthModelProps) => {
                         type="submit"
                         className="w-full h-11 bg-gradient-primary hover:shadow-glow-primary"
                         variant={"hero"}
+                        disabled={loading}
                       >
                         Create Account
                         <ArrowRight className="ml-2 w-4 h-4" />
                       </Button>
-                      {/* {error && <p className="text-red-500 text-sm">{error}</p>} */}
+                      {error && <p className="text-red-500 text-sm">{error}</p>}
                     </div>
                   </form>
                   <div className="text-center text-sm text-muted-foreground">

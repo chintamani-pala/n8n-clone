@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>
+        <%= locals.title || 'FlowX' %>
+    </title>
+    <style>
+        /* Base styles */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f3f4f6;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        table {
+            border-spacing: 0;
+            border-collapse: collapse;
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+        }
+
+        img {
+            border: 0;
+            -ms-interpolation-mode: bicubic;
+        }
+
+        /* Container & Card */
+        .wrapper {
+            width: 100%;
+            table-layout: fixed;
+            background-color: #f3f4f6;
+            padding-bottom: 40px;
+        }
+
+        .main-table {
+            background-color: #ffffff;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 600px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-top: 40px;
+        }
+
+        /* Elements */
+        .button {
+            display: inline-block;
+            background-color: #2563eb;
+            color: #ffffff !important;
+            padding: 14px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+        }
+
+        .button:hover {
+            background-color: #1d4ed8;
+        }
+
+        /* Mobile Responsive */
+        @media screen and (max-width: 600px) {
+            .main-table {
+                width: 100% !important;
+                border-radius: 0 !important;
+                margin-top: 0 !important;
+            }
+
+            .content-cell {
+                padding: 24px !important;
+            }
+
+            .header-cell {
+                padding: 24px !important;
+            }
+        }
+    </style>
+</head>
+
+<body style="background-color: #f3f4f6; margin: 0; padding: 0;">
+    <div class="wrapper">
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td align="center" style="padding-bottom: 40px;">
+                    <table class="main-table" role="presentation" border="0" cellpadding="0" cellspacing="0"
+                        width="100%"
+                        style="max-width: 600px; background-color: #ffffff; border-radius: 12px; margin-top: 40px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+
+                        <!-- Header with Brand Color -->
+                        <tr>
+                            <td class="header-cell"
+                                style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); padding: 32px 40px; text-align: center;">
+                                <h1
+                                    style="color: #ffffff; margin: 0; font-family: 'Inter', sans-serif; font-size: 28px; font-weight: 800; letter-spacing: -0.025em; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                    FlowX</h1>
+                            </td>
+                        </tr>
+
+                        <!-- Main Content -->
+                        <tr>
+                            <td class="content-cell" style="padding: 40px; background-color: #ffffff;">
+                                <!-- Title Section -->
+                                <% if (locals.title) { %>
+                                    <h2
+                                        style="margin: 0 0 16px 0; color: #111827; font-family: 'Inter', sans-serif; font-size: 24px; font-weight: 700; line-height: 1.3;">
+                                        <%= title %>
+                                    </h2>
+                                    <% } %>
+
+                                        <!-- Subtitle Section -->
+                                        <% if (locals.subtitle) { %>
+                                            <p
+                                                style="margin: 0 0 32px 0; color: #4b5563; font-family: 'Inter', sans-serif; font-size: 16px; line-height: 24px;">
+                                                <%= subtitle %>
+                                            </p>
+                                            <% } %>
+
+                                                <!-- Dynamic Content Body -->
+                                                <div
+                                                    style="color: #374151; font-family: 'Inter', sans-serif; font-size: 16px; line-height: 1.6;">
+                                                    <%- body %>
+                                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Divider -->
+                        <tr>
+                            <td style="padding: 0 40px;">
+                                <div style="height: 1px; background-color: #e5e7eb; width: 100%;"></div>
+                            </td>
+                        </tr>
+
+                        <!-- Footer -->
+                        <tr>
+                            <td style="background-color: #f9fafb; padding: 32px 40px; text-align: center;">
+                                <p
+                                    style="margin: 0 0 16px 0; color: #6b7280; font-family: 'Inter', sans-serif; font-size: 12px; line-height: 1.5;">
+                                    &copy; <%= new Date().getFullYear() %> FlowX Inc. All rights reserved.<br>
+                                        123 Automation Street, Tech City, TC 90210
+                                </p>
+
+                                <div style="margin-top: 16px;">
+                                    <a href="#"
+                                        style="color: #9ca3af; text-decoration: none; font-size: 12px; margin: 0 8px; font-family: 'Inter', sans-serif;">Privacy
+                                        Policy</a>
+                                    <span style="color: #d1d5db;">&bull;</span>
+                                    <a href="#"
+                                        style="color: #9ca3af; text-decoration: none; font-size: 12px; margin: 0 8px; font-family: 'Inter', sans-serif;">Terms
+                                        of Service</a>
+                                    <span style="color: #d1d5db;">&bull;</span>
+                                    <a href="#"
+                                        style="color: #9ca3af; text-decoration: none; font-size: 12px; margin: 0 8px; font-family: 'Inter', sans-serif;">Unsubscribe</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Floating Footer Info -->
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%"
+                        style="max-width: 600px; margin: 0 auto;">
+                        <tr>
+                            <td style="padding: 24px; text-align: center;">
+                                <p
+                                    style="margin: 0; color: #9ca3af; font-family: 'Inter', sans-serif; font-size: 12px;">
+                                    Sent with 💙 by FlowX Team
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+</html>

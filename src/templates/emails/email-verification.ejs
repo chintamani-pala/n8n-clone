@@ -1,0 +1,52 @@
+<%- include('base', { title: 'Verify your email' ,
+    subtitle: 'Confirm your email address to unlock full access to FlowX.' , body: ` <div style="text-align: left;">
+    <p style="margin-top: 0; font-size: 16px; color: #374151;">
+        Hello <strong>${name}</strong>,
+    </p>
+    <p style="font-size: 16px; color: #374151; line-height: 24px;">
+        Thank you for joining FlowX! We're thrilled to have you as part of our community.
+        To ensure the security of your account and start building amazing workflows, we just need to verify your email
+        address.
+    </p>
+
+    <!-- CTA Button -->
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td align="center" style="padding: 32px 0;">
+                <a href="${url}" target="_blank"
+                    style="display: inline-block; background-color: #2563eb; color: #ffffff; padding: 16px 36px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2); transition: background-color 0.2s;">
+                    Verify Email Address &rarr;
+                </a>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Security Note -->
+    <div
+        style="background-color: #eff6ff; border-left: 4px solid #2563eb; padding: 16px; border-radius: 4px; margin-bottom: 32px;">
+        <p style="margin: 0; color: #1e3a8a; font-size: 14px; line-height: 1.5;">
+            <strong>🔒 Security Notice:</strong> This verification link is valid for <strong>24 hours</strong>. If you
+            didn't create an account with FlowX, you can safely delete this email.
+        </p>
+    </div>
+
+    <!-- Alternative Link -->
+    <p style="font-size: 14px; color: #6b7280; margin-bottom: 12px;">
+        Having trouble clicking the button? Copy and paste this link into your browser:
+    </p>
+
+    <div
+        style="background-color: #f9fafb; padding: 12px; border-radius: 6px; border: 1px solid #e5e7eb; overflow-wrap: break-word; word-break: break-all;">
+        <a href="${url}"
+            style="color: #2563eb; text-decoration: underline; font-size: 13px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; line-height: 1.5;">
+            ${url}
+        </a>
+    </div>
+
+    <p style="margin-top: 32px; font-size: 16px; color: #374151; border-top: 1px solid #e5e7eb; padding-top: 32px;">
+        Happy automating,<br>
+        <strong>The FlowX Team</strong>
+    </p>
+    </div>
+    `
+    }) %>
