@@ -47,7 +47,7 @@ const Header = () => {
           <Link href={"/"}>
             <div className="flex items-center gap-2 animate-fade-in text-primary">
               <Image
-                src="/logo.png"
+                src={require("@/assets/logo.png")}
                 alt="FlowX Logo"
                 width={120}
                 height={40}
