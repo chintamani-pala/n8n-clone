@@ -65,6 +65,13 @@ const AuthModel = ({ isOpen, onOpenChange }: AuthModelProps) => {
       const ok = await signup(name, validateData.email, validateData.password);
       if (ok) {
         toast.success("Check your email for activating your account")
+        setForm({
+          firstName: "",
+          lastName: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+        })
       }
     } catch (error: any) {
       if (error instanceof z.ZodError) {
@@ -85,6 +92,7 @@ const AuthModel = ({ isOpen, onOpenChange }: AuthModelProps) => {
       const ok = await login(validateData.email, validateData.password);
       if (ok) {
         onOpenChange(false);
+        window.location.reload();
       }
     } catch (error: any) {
       if (error instanceof z.ZodError) {

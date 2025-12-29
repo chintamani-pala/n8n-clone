@@ -9,7 +9,7 @@ type User = {
     emailVerified: boolean;
 }
 
-const fetcher = (url: string) => fetch(url, { credentials: "include" }).then(async (res) => {
+const fetcher = (url: string) => fetch(url, { credentials: "include", method: "GET" }).then(async (res) => {
     if (res.status === 401) return { user: null }
     const json = await res.json()
     return json;
@@ -21,6 +21,7 @@ export function useUser() {
         revalidateOnReconnect: false,
         shouldRetryOnError: false
     });
+    console.log(isLoading)
     const user = data?.user ?? null
     async function refreshUser() {
         await mutate()

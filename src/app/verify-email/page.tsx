@@ -23,26 +23,6 @@ function VerifyEmailContent() {
 
         const verify = async () => {
             try {
-                // We don't need email and code exactly like the hook expects if we are just calling the API with token
-                // But the hook 'verifyEmail' defined in Step 21 takes (email, code) and calls /api/auth/verify-email with body {email, code}
-                // Wait, Step 21 hook:
-                // async function verifyEmail(email: string, code: string) { ... body: JSON.stringify({ email, code }) ... }
-                // But Step 20 API route:
-                // export async function GET(request: Request) { check url.searchParams.get("token") ... auth.api.verifyEmail({ query: { token } }) ... }
-
-                // The API route in Step 20 is a GET that expects 'token' in query param.
-                // The hook in Step 21 posts to the same route? No, the hook posts to /api/auth/verify-email?
-                // Let's check Step 20 again.
-                // Step 20 creates 'src/app/api/auth/verify-email/route.ts' with 'export async function GET'.
-                // It does NOT have a POST export.
-
-                // The hook in Step 21 calls:
-                // const result = await fetch("/api/auth/verify-email", { method: "POST", ... })
-                // This means the hook is broken or incompatible with the API route from Step 20.
-
-                // I should fix the hook or call fetch directly here.
-                // Since I am in the page, I will call the GET endpoint directly.
-
                 const res = await fetch(`/api/auth/verify-email?token=${token}`);
                 const data = await res.json();
 
