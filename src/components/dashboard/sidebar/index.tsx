@@ -33,7 +33,7 @@ const navItems = [
         icon: Settings
     }
 ]
-const Sidebar = () => {
+const Sidebar = ({ className }: { className?: string }) => {
     const pathname = usePathname();
     const router = useRouter();
     const { logout } = useAuth();
@@ -42,7 +42,7 @@ const Sidebar = () => {
         router.push("/");
     }
     return (
-        <div className='w-64 bg-[#121826] border-r border-[#E293B] flex flex-col'>
+        <div className={cn('w-64 bg-[#121826] border-r border-[#E293B] flex-col hidden md:flex', className)}>
             <div className='px-4 pt-3 pb-2'>
                 <Link href="/" className="flex items-center">
                     <Image

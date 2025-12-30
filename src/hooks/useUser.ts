@@ -21,7 +21,6 @@ export function useUser() {
         revalidateOnReconnect: false,
         shouldRetryOnError: false
     });
-    console.log(isLoading)
     const user = data?.user ?? null
     async function refreshUser() {
         await mutate()

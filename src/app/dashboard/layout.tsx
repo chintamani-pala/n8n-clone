@@ -13,9 +13,9 @@ export default function DashboardLayout({
 }) {
     return <div className="flex h-screen bg-[#0B0F14]">
         <Sidebar />
-        <div className="flex-1 flex-co overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden">
             <TopBar />
-            <main className="flex-1 overflow-auto bg-linear-to-br from-[#0B0F14] to-[#0E1320]">
+            <main className="flex-1 overflow-y-auto bg-linear-to-br from-[#0B0F14] to-[#0E1320]">
                 {children}
             </main>
         </div>
