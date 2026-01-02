@@ -29,7 +29,6 @@ const TemplateCard = ({
         return iconMap[iconName] || "🔧"
     }
 
-
     const useTemplateHandler = () => {
         router.push(`/dashboard/templates/${template.id}`)
     }
