@@ -123,3 +123,81 @@ export function reindexStepNumbers(nds: Node[], eds: Edge[]): Node[] {
         return isStep(n) && newStep && (n.data as any)?.stepNumber !== newStep ? { ...n, data: { ...n.data, stepNumber: newStep } } : n;
     })
 }
+
+
+export function buildInitialFlow(
+    foundTemplate: any,
+    configuredSteps: Record<number, boolean>
+) {
+    let nodes: Node[] = foundTemplate.steps?.map((step: any, index: number) => {
+        return {
+            id: `step-${index}`,
+            type: "custom",
+            position: getNodePosition(index),
+            data: {
+                label: step, //label shon on the canvas
+                description: `Step ${index + 1}`, //helper text
+                icon: getIconForStep(step),  // icon delivered by label content
+                isStartNode: index === 0, // flags first node
+                stepNumber: index + 1,// execution order
+                isConfigured: !!configuredSteps[index + 1], //UI ready state
+            }
+        }
+    })
+    let edges: Edge[] = foundTemplate.steps.slice(1).map((_: any, index: number) => {
+        return {
+            id: `edge-${index}-${index + 1}`,
+            source: `step-${index}`,
+            target: `step-${index + 1}`,
+            sourceHandle: "right",
+            targetHandle: "left",
+            animated: true,
+            style: EDGE_STYPE,
+        }
+    })
+
+    const aiConnIndex = foundTemplate.steps.findIndex((step: any) => step.toLowerCase().includes("ai connection"));
+    if (aiConnIndex !== -1) {
+        const insertionStep = aiConnIndex + 2;
+        nodes = nodes.map((n, index) => {
+            const sn = (n.data as any)?.stepNumber;
+            return typeof sn === "number" && sn >= insertionStep ?
+                {
+                    ...n,
+                    data: {
+                        ...n.data,
+                        stepNumber: sn + 1
+                    }
+                } : n;
+        })
+
+        const aiNodeId = "ai-tool-1"
+        nodes.push({
+            id: aiNodeId,
+            type: "custom",
+            position: { x: 4400, y: 350 },
+            data: {
+                label: "OpenAi Model", //label shon on the canvas
+                description: `AI Processing`, //helper text
+                icon: "Brain",  // icon delivered by label content
+                isStartNode: false, // flags first node
+                stepNumber: insertionStep,// execution order
+                isConfigured: !!configuredSteps[insertionStep], //UI ready state
+            }
+        })
+        const sourceId = `step-${aiConnIndex}`;
+        const targetId = `step-${aiConnIndex + 1}`;
+        edges = edges.filter((e) => !(e.source === sourceId && e.target === targetId))
+        edges.push({
+            id: `edge-${sourceId}-${aiNodeId}`,
+            source: sourceId,
+            target: aiNodeId,
+            sourceHandle: "bottom",
+            targetHandle: "top",
+            animated: true,
+            style: EDGE_STYPE,
+        })
+    }
+
+    return { nodes, edges };
+}
