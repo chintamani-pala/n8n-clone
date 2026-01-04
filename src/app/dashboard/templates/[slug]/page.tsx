@@ -16,6 +16,37 @@ import "reactflow/dist/style.css"
 import { mockTemplates } from "@/lib/mock";
 import { toast } from "sonner"
 import { Card, CardContent } from '@/components/ui/card';
+import { EDGE_STYLE, reindexStepNumbers } from '@/components/dashboard/workflows/flow-utils';
+import { nodeTypes } from '@/components/dashboard/workflows/custom-node';
+
+const linkEdges = (sourceId: string, newId: string, eds: any[]) => {
+    const outgoing = eds.filter((e) => e.source === sourceId)
+    const remaining = eds.filter((e) => e.source !== sourceId)
+    const edgeToNew = {
+        id: `edge-${sourceId}-${newId}-${Date.now()}`,
+        source: sourceId,
+        target: newId,
+        sourceHandle: "right",
+        targetHandle: "left",
+        animated: true,
+        style: EDGE_STYLE
+    }
+
+
+    const newToTargets = outgoing.map((e) => ({
+        id: `edge-${newId}-${e.target}-${Date.now()}`,
+        source: newId,
+        target: e.target,
+        sourceHandle: "right",
+        targetHandle: "left",
+        animated: true,
+        style: EDGE_STYLE
+    }));
+
+    return [...remaining, edgeToNew, ...newToTargets]
+}
+
+
 const Page = () => {
     const params = useParams();
     const slug = params.slug as string;
@@ -29,12 +60,104 @@ const Page = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalNodeData, setModalNodeData] = useState<any>(null);
 
+    const [reactFlowInstance, setReactFlowInstance] = useState<any>(null)
+    const [nodeErrors, setNodeErrors] = useState<Record<string, string>>({})
+
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
 
     const handleNodesChange = useCallback((changes: any) => {
         onNodesChange(changes)
-        // setNodes((nds)=> );
+        setNodes((nds) => reindexStepNumbers(nds, edges));
     }, [onNodesChange, setNodes, edges]);
+
+    const onDragStart = useCallback((event: React.DragEvent, nodeType: any) => {
+        event.dataTransfer.setData("application/reactflow", JSON.stringify(nodeType));
+        event.dataTransfer.effectAllowed = "move";
+    }, [])
+
+
+
+
+    const onDrop = useCallback((event: React.DragEvent) => {
+        event.preventDefault();
+        if (!reactFlowWrapper.current || !reactFlowInstance) return;
+
+        const bounds = reactFlowWrapper.current.getBoundingClientRect();
+        const nodeData = JSON.parse(event.dataTransfer.getData("application/reactflow"))
+        const position = reactFlowInstance.project({
+            x: event.clientX - bounds.left,
+            y: event.clientY - bounds.top
+        })
+        const newId = `${nodeData.id}-${Date.now()}`
+
+        setNodes((nds) => {
+            const selectedStep = (selectedNode?.data as any)?.stepNumber ?? null;
+            const currentStepCount = nds.reduce((count, n) => typeof (n.data as any)?.stepNumber === "number" ? count + 1 : count, 0)
+
+            const insertionStep = selectedStep !== null ? selectedStep + 1 : currentStepCount + 1;
+
+            //Shift step number for nodes at or after the insertion point
+            const shifted = nds.map((n) => {
+                const sn = (n.data as any)?.stepNumber;
+                return typeof sn === "number" && sn >= insertionStep ? { ...n, data: { ...n.data, stepNumber: sn + 1 } } : n;
+            })
+
+            //Construct the new node data payload
+            const newNode = {
+                id: newId,
+                type: "custom",
+                position,
+                data: {
+                    label: nodeData.name,
+                    description: nodeData.description,
+                    icon: nodeData.icon,
+                    stepNumber: insertionStep,
+                    isConfigured: false,
+                    config: null
+                }
+            }
+            return reindexStepNumbers(shifted.concat(newNode), edges)
+        });
+
+        //Rewire edges so the new node sits between the selected node and its former targets
+        if (selectedNode) {
+            setEdges((eds) => {
+                const newEdges = linkEdges(selectedNode.id, newId, eds);
+                setNodes((nds) => reindexStepNumbers(nds, newEdges));
+                return newEdges;
+            })
+        }
+    }, [reactFlowInstance, selectedNode, edges, setEdges, setNodes])
+
+    const onConnect = useCallback((params: Connection) => {
+        const edgeId = `edge-${params.source}-${params.target}-${Date.now()}`;
+        setEdges((eds) => addEdge({ ...params, id: edgeId, animated: true, style: EDGE_STYLE }, eds))
+    }, [setEdges])
+
+    const onDragOver = useCallback((event: React.DragEvent) => {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = "move";
+    }, [])
+
+    const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
+        setSelectedNode(node);
+    }, [])
+
+    const openModal = useCallback((nodeData: any) => {
+        setModalNodeData(nodeData)
+        setIsModalOpen(true)
+    }, [])
+    const closeModal = useCallback(() => {
+        setIsModalOpen(false)
+        setModalNodeData(null)
+    }, [])
+
+    const onNodeDoubleClick = useCallback((event: React.MouseEvent, node: Node) => {
+        openModal(node.data)
+    }, [openModal])
+
+
+
     useEffect(() => {
         const template = mockTemplates.find((template) => template.id === slug);
         if (template) {
@@ -72,7 +195,16 @@ const Page = () => {
                                 edges={edges}
                                 onNodesChange={handleNodesChange}
                                 onEdgesChange={onEdgesChange}
-                                onNodeClick={(event, node) => setSelectedNode(node)}
+                                onConnect={onConnect}
+                                onInit={setReactFlowInstance}
+                                onDrop={onDrop}
+                                onDragOver={onDragOver}
+                                onNodeClick={onNodeClick}
+                                onNodeDoubleClick={onNodeDoubleClick}
+                                nodeTypes={nodeTypes}
+                                fitView
+                                attributionPosition='bottom-right'
+                                className='bg-[#0B0F14]'
                             >
                                 <Background />
                                 <Controls />

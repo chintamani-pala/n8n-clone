@@ -51,7 +51,7 @@ export const ICON_MAP: Record<string, React.ComponentType<{ className?: string }
     RotateCcw
 }
 
-export const EDGE_STYPE = {
+export const EDGE_STYLE = {
     stroke: "#10B981",
     strokeWidth: 2,
     strokeDasharray: "5,5"
@@ -152,7 +152,7 @@ export function buildInitialFlow(
             sourceHandle: "right",
             targetHandle: "left",
             animated: true,
-            style: EDGE_STYPE,
+            style: EDGE_STYLE,
         }
     })
 
@@ -195,7 +195,7 @@ export function buildInitialFlow(
             sourceHandle: "bottom",
             targetHandle: "top",
             animated: true,
-            style: EDGE_STYPE,
+            style: EDGE_STYLE,
         })
     }
 
