@@ -29,4 +29,5 @@ const CustomNode = ({ data, isConnectable }: NodeProps<NodeData>) => {
 
 export default CustomNode
 
+
 export const nodeTypes = { custom: CustomNode }
