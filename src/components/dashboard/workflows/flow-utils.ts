@@ -95,7 +95,7 @@ export function reindexStepNumbers(nds: Node[], eds: Edge[]): Node[] {
         }
     })
 
-    const startId = [...idSet].find((id) => (incommingCount.get(id) || 0) === 0 || stepNodes.sort((a, b) => a.position.x - b.position.x)[0]?.id);
+    const startId = [...idSet].find((id) => (incommingCount.get(id) || 0) === 0) || stepNodes.sort((a, b) => a.position.x - b.position.x)[0]?.id;
     const chain: string[] = [];
 
     let cursor: any = startId;
@@ -156,7 +156,7 @@ export function buildInitialFlow(
         }
     })
 
-    const aiConnIndex = foundTemplate.steps.findIndex((step: any) => step.toLowerCase().includes("ai connection"));
+    const aiConnIndex = foundTemplate.steps.findIndex((step: any) => step.toLowerCase().includes("ai generate"));
     if (aiConnIndex !== -1) {
         const insertionStep = aiConnIndex + 2;
         nodes = nodes.map((n, index) => {
@@ -175,7 +175,7 @@ export function buildInitialFlow(
         nodes.push({
             id: aiNodeId,
             type: "custom",
-            position: { x: 4400, y: 350 },
+            position: { x: 400, y: 350 },
             data: {
                 label: "OpenAi Model", //label shon on the canvas
                 description: `AI Processing`, //helper text

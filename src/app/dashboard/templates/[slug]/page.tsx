@@ -172,63 +172,86 @@ const Page = () => {
 
 
     useEffect(() => {
-        const foundTemplate = mockTemplates.find((template) => template.id === slug);
-        if (!template) return
-        setTemplate(template);
-        const { nodes: initialNodes, edges: initialEdges } = buildInitialFlow(foundTemplate, configuredSteps)
-        console.log(nodes)
-        setNodes(reindexStepNumbers(initialNodes, initialEdges))
-        setEdges(initialEdges)
-        console.log(initialEdges)
-    }, [slug, setNodes, setEdges])
+        const foundTemplate = mockTemplates.find((t) => t.id === slug);
+        if (!foundTemplate) {
+            setTemplate(null);
+            return;
+        }
+        setTemplate(foundTemplate);
 
+        const { nodes: initialNodes, edges: initialEdges } = buildInitialFlow(foundTemplate, configuredSteps)
+        console.log("Initial Nodes:", initialNodes);
+        console.log("Initial Edges:", initialEdges);
+
+        const reindexedNodes = reindexStepNumbers(initialNodes, initialEdges);
+
+        // Fallback if reindexing fails essentially
+        if (reindexedNodes.length > 0) {
+            setNodes(reindexedNodes);
+        } else {
+            console.warn("Reindexing returned 0 nodes, falling back to initialNodes");
+            setNodes(initialNodes);
+        }
+
+        setEdges(initialEdges);
+    }, [slug, configuredSteps, setNodes, setEdges]) // Added configuredSteps to deps
+
+    if (!template && !slug) return <div className="p-6 text-white">Loading...</div>;
     return (
         <div className='flex h-full'>
             {/*left column - header and canvas*/}
             <div className="flex-1  p-6 flex flex-col h-full">
-                <div className="flex items-center justify-between mb-6">
-                    <div>
-                        <h1 className="text-3xl font-bold text-white">
-                            Edit Template: {template?.name || slug}
-                        </h1>
-                        <p className="text-gray-400">
-                            {
-                                template?.description || "Design your workflow by connecting nodes"
-                            }
-                        </p>
-                    </div>
-                    <div className='flex items-center gap-3'>
-
-
-
-                    </div>
-                </div>
-                {/*canvas controls */}
-                <Card className='bg-[#121826] border-[#1E293B] flex-1 relative'>
-                    <CardContent className='p-0 h-full'>
-                        <div ref={reactFlowWrapper} className='h-full w-full'>
-                            <ReactFlow
-                                nodes={nodes}
-                                edges={edges}
-                                onNodesChange={handleNodesChange}
-                                onEdgesChange={onEdgesChange}
-                                onConnect={onConnect}
-                                onInit={setReactFlowInstance}
-                                onDrop={onDrop}
-                                onDragOver={onDragOver}
-                                onNodeClick={onNodeClick}
-                                onNodeDoubleClick={onNodeDoubleClick}
-                                nodeTypes={nodeTypes}
-                                fitView
-                                attributionPosition='bottom-right'
-                                className='bg-[#0B0F14]'
-                            >
-                                <Background color='#334155' gap={16} />
-                                <Controls className='bg-[#1E293B] border-[#334155] text-gray-300' />
-                            </ReactFlow>
+                {
+                    !template ? (
+                        <div className="flex items-center justify-center h-full">
+                            <h1 className="text-xl font-bold text-gray-400">Template not found for slug: {slug}</h1>
                         </div>
-                    </CardContent>
-                </Card>
+                    ) : (
+                        <>
+                            <div className="flex items-center justify-between mb-6">
+                                <div>
+                                    <h1 className="text-3xl font-bold text-white">
+                                        Edit Template: {template.name}
+                                    </h1>
+                                    <p className="text-gray-400">
+                                        {
+                                            template.description || "Design your workflow by connecting nodes"
+                                        }
+                                    </p>
+                                </div>
+                                <div className='flex items-center gap-3'>
+                                    {/* Actions could go here */}
+                                </div>
+                            </div>
+                            {/*canvas controls */}
+                            <Card className='bg-[#121826] border-[#1E293B] flex-1 relative'>
+                                <CardContent className='p-0 h-full'>
+                                    <div ref={reactFlowWrapper} className='h-full w-full'>
+                                        <ReactFlow
+                                            nodes={nodes}
+                                            edges={edges}
+                                            onNodesChange={handleNodesChange}
+                                            onEdgesChange={onEdgesChange}
+                                            onConnect={onConnect}
+                                            onInit={setReactFlowInstance}
+                                            onDrop={onDrop}
+                                            onDragOver={onDragOver}
+                                            onNodeClick={onNodeClick}
+                                            onNodeDoubleClick={onNodeDoubleClick}
+                                            nodeTypes={nodeTypes}
+                                            fitView
+                                            attributionPosition='bottom-right'
+                                            className='bg-[#0B0F14]'
+                                        >
+                                            <Background color='#334155' gap={16} />
+                                            <Controls className='bg-[#1E293B] border-[#334155] text-gray-300' />
+                                        </ReactFlow>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </>
+                    )
+                }
             </div>
             <div className="w-80 border border-[#1E293B] p-4 overflow-y-auto"></div>
         </div>
