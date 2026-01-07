@@ -2,7 +2,7 @@ import { PgBooleanBuilder } from 'drizzle-orm/pg-core';
 import React from 'react'
 import { NodeProps } from 'reactflow';
 import { ICON_MAP } from './flow-utils';
-import { ArrowRightIcon } from "lucide-react"
+import { ArrowRightIcon, Zap } from "lucide-react"
 
 interface NodeData {
   label: string;
@@ -21,6 +21,14 @@ const CustomNode = ({ data, isConnectable }: NodeProps<NodeData>) => {
       {
         hasError && (
           <div className="absolute -top-3 -right-3 w-6 h-6 rounded-full bg-red-500 text-black">!</div>
+        )
+      }
+      {
+        data?.isStartNode && (
+          <div className="absolute -top-8 left-0 flex items-center">
+            <Zap className="w-4 h-4 text-yellow-400 mr-1" />
+            <span className='text-white text-xs font-medium'>Start here:</span>
+          </div>
         )
       }
     </div>
