@@ -16,7 +16,7 @@ import "reactflow/dist/style.css"
 import { mockTemplates } from "@/lib/mock";
 import { toast } from "sonner"
 import { Card, CardContent } from '@/components/ui/card';
-import { EDGE_STYLE, reindexStepNumbers } from '@/components/dashboard/workflows/flow-utils';
+import { buildInitialFlow, EDGE_STYLE, reindexStepNumbers } from '@/components/dashboard/workflows/flow-utils';
 import { nodeTypes } from '@/components/dashboard/workflows/custom-node';
 
 const linkEdges = (sourceId: string, newId: string, eds: any[]) => {
@@ -62,6 +62,11 @@ const Page = () => {
 
     const [reactFlowInstance, setReactFlowInstance] = useState<any>(null)
     const [nodeErrors, setNodeErrors] = useState<Record<string, string>>({})
+    const [configuredSteps, setConfiguredSteps] = useState<Record<number, boolean>>({})
+    const [userConnections, setUserConnections] = useState<any[]>([]);
+    const [connLoading, setConnLoading] = useState(false);
+
+
 
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
 
@@ -156,14 +161,26 @@ const Page = () => {
         openModal(node.data)
     }, [openModal])
 
+    useEffect(() => {
+        if (selectedNode) {
+            const updated = nodes.find((n) => n.id === selectedNode.id)
+            if (updated && Boolean((updated.data as any)?.isConfigured) !== Boolean(selectedNode.data?.isConfigured)) {
+                setSelectedNode(updated)
+            }
+        }
+    }, [nodes, selectedNode])
 
 
     useEffect(() => {
-        const template = mockTemplates.find((template) => template.id === slug);
-        if (template) {
-            setTemplate(template);
-        }
-    }, [slug])
+        const foundTemplate = mockTemplates.find((template) => template.id === slug);
+        if (!template) return
+        setTemplate(template);
+        const { nodes: initialNodes, edges: initialEdges } = buildInitialFlow(foundTemplate, configuredSteps)
+        console.log(nodes)
+        setNodes(reindexStepNumbers(initialNodes, initialEdges))
+        setEdges(initialEdges)
+        console.log(initialEdges)
+    }, [slug, setNodes, setEdges])
 
     return (
         <div className='flex h-full'>
@@ -206,14 +223,14 @@ const Page = () => {
                                 attributionPosition='bottom-right'
                                 className='bg-[#0B0F14]'
                             >
-                                <Background />
-                                <Controls />
+                                <Background color='#334155' gap={16} />
+                                <Controls className='bg-[#1E293B] border-[#334155] text-gray-300' />
                             </ReactFlow>
                         </div>
                     </CardContent>
                 </Card>
             </div>
-
+            <div className="w-80 border border-[#1E293B] p-4 overflow-y-auto"></div>
         </div>
     )
 }

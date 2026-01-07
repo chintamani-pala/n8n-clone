@@ -1,8 +1,8 @@
 import { PgBooleanBuilder } from 'drizzle-orm/pg-core';
 import React from 'react'
-import { NodeProps } from 'reactflow';
+import { Handle, NodeProps, Position as ReactFlowPosition } from 'reactflow';
 import { ICON_MAP } from './flow-utils';
-import { ArrowRightIcon, Zap } from "lucide-react"
+import { ArrowRightIcon, Zap, AlertTriangle } from "lucide-react"
 
 interface NodeData {
   label: string;
@@ -30,6 +30,51 @@ const CustomNode = ({ data, isConnectable }: NodeProps<NodeData>) => {
             <span className='text-white text-xs font-medium'>Start here:</span>
           </div>
         )
+      }
+      {/*running step badge*/}
+      {
+        isRunning && typeof data?.stepNumber === "number" && (
+          <div className="absolute -top-3 -right-3 w-6 h-6 rounded-full bg-green-500 text-black  flex items-center">
+            {data.stepNumber}
+          </div>
+        )
+      }
+      <div className='flex items-center'>
+        <div className="w-8 h-8 rounded-md bg-[#0B0F14] flex items-center justify-center mr-3">
+          <IconComponent className="w-4 h-4 text-green-400" />
+        </div>
+        <div>
+          <p className="text-sm font-medium text-white">{data?.label}</p>
+          {
+            data?.descriptions && (
+              <p className="text-xs text-gray-400">
+                {data?.stepNumber ? `Step ${data?.stepNumber}` : data.descriptions}
+              </p>
+            )
+          }
+        </div>
+      </div>
+      {
+        !data?.isConfigured && (
+          <div className=" flex items-center mt-2">
+            <AlertTriangle className="w-4 h-4 text-red-500 mr-2" />
+            <p className="text-xs text-red-400">Platform needs configurations</p>
+          </div>
+        )
+      }
+      <p className="text-xs text-gray-400 mt-2">Double-click to configure</p>
+
+      {
+        ["left", "right", "top", "bottom"].map((pos) => (
+          <Handle
+            key={pos}
+            type={pos === "left" || pos === "top" ? "target" : "source"}
+            position={ReactFlowPosition[(pos.charAt(0).toUpperCase() + pos.slice(1)) as keyof typeof ReactFlowPosition]}
+            id={pos}
+            isConnectable={isConnectable}
+            className='w-2 h-2 bg-green-400'
+          />
+        ))
       }
     </div>
   )
