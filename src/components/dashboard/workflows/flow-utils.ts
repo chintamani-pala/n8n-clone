@@ -197,6 +197,17 @@ export function buildInitialFlow(
             animated: true,
             style: EDGE_STYLE,
         })
+
+        // Add edge from AI node to the next step
+        edges.push({
+            id: `edge-${aiNodeId}-${targetId}`,
+            source: aiNodeId,
+            target: targetId,
+            sourceHandle: "right",
+            targetHandle: "left",
+            animated: true,
+            style: EDGE_STYLE,
+        })
     }
 
     return { nodes, edges };
