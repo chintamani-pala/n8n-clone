@@ -1,0 +1,27 @@
+# stage 1
+FROM node:24-alpine3.22 AS builder
+
+WORKDIR /n8n
+
+
+COPY . .
+
+RUN npm install
+
+RUN npm run build
+
+
+#stage2
+FROM gcr.io/distroless/nodejs24-debian12
+WORKDIR /n8n
+
+# Copy standalone server
+COPY --from=builder /n8n/.next/standalone ./
+
+# Copy static assets EXACTLY where server expects them
+COPY --from=builder /n8n/.next/static ./.next/static
+COPY --from=builder /n8n/public ./public
+
+EXPOSE 3000
+
+CMD ["server.js"]
