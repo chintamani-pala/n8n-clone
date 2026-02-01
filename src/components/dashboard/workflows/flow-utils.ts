@@ -14,7 +14,11 @@ import {
     Hash,
     Bell,
     Timer,
-    RotateCcw
+    RotateCcw,
+    Globe,
+    Bot,
+    FileSpreadsheet,
+    LayoutList
 } from "lucide-react";
 import {
     ReactFlow,
@@ -48,7 +52,11 @@ export const ICON_MAP: Record<string, React.ComponentType<{ className?: string }
     Hash,
     Bell,
     Timer,
-    RotateCcw
+    RotateCcw,
+    Globe,
+    Bot,
+    FileSpreadsheet,
+    LayoutList
 }
 
 export const EDGE_STYLE = {
@@ -56,6 +64,47 @@ export const EDGE_STYLE = {
     strokeWidth: 2,
     strokeDasharray: "5,5"
 }
+
+export const TOOL_NODES = [
+    {
+        id: "ai",
+        category: "AI & Machine Learning",
+        items: [
+            { id: "openai", name: "OpenAI", icon: Brain, description: "Generate text/images with GPT" },
+            { id: "claude", name: "Claude", icon: Bot, description: "Anthropic's helper" },
+            { id: "gemini", name: "Gemini", icon: Zap, description: "Google's multimodal AI" },
+        ]
+    },
+    {
+        id: "integrations",
+        category: "Integrations",
+        items: [
+            { id: "gmail", name: "Gmail", icon: Mail, description: "Send & receive emails" },
+            { id: "slack", name: "Slack", icon: MessageSquare, description: "Send messages to channels" },
+            { id: "discord", name: "Discord", icon: Hash, description: "Post to Discord servers" },
+            { id: "notion", name: "Notion", icon: LayoutList, description: "Manage pages & databases" },
+            { id: "sheets", name: "Google Sheets", icon: FileSpreadsheet, description: "Read/Write spreadsheet rows" },
+            { id: "stripe", name: "Stripe", icon: CreditCard, description: "Process payments" },
+            { id: "webhook-custom", name: "Custom Webhook", icon: Webhook, description: "Send data out via webhook" },
+        ]
+    },
+    {
+        id: "triggers",
+        category: "Triggers",
+        items: [
+            { id: "webhook-trigger", name: "Webhook Trigger", icon: Webhook, description: "Start flow on request" },
+            { id: "schedule-trigger", name: "Schedule", icon: Clock, description: "Run at fixed intervals" },
+        ]
+    },
+    {
+        id: "actions",
+        category: "Core Actions",
+        items: [
+            { id: "http-request", name: "HTTP Request", icon: Globe, description: "Make external API calls" },
+            { id: "send-notifications", name: "Send Notification", icon: Bell, description: "App/Email alerts" },
+        ]
+    }
+]
 
 export const getIconForStep = (stepName: string): string => {
     const iconKeys = Object.keys(ICON_MAP);

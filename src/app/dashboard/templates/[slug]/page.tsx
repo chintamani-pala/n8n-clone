@@ -16,8 +16,12 @@ import "reactflow/dist/style.css"
 import { mockTemplates } from "@/lib/mock";
 import { toast } from "sonner"
 import { Card, CardContent } from '@/components/ui/card';
-import { buildInitialFlow, EDGE_STYLE, reindexStepNumbers } from '@/components/dashboard/workflows/flow-utils';
+import { buildInitialFlow, EDGE_STYLE, reindexStepNumbers, TOOL_NODES } from '@/components/dashboard/workflows/flow-utils';
 import { nodeTypes } from '@/components/dashboard/workflows/custom-node';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
+import { Play, Save } from "lucide-react"
+import { Button } from '@/components/ui/button';
+import NodeConfigurationModal from '@/components/dashboard/workflows/node-configuration-modal';
 
 const linkEdges = (sourceId: string, newId: string, eds: any[]) => {
     const outgoing = eds.filter((e) => e.source === sourceId)
@@ -44,6 +48,29 @@ const linkEdges = (sourceId: string, newId: string, eds: any[]) => {
     }));
 
     return [...remaining, edgeToNew, ...newToTargets]
+}
+
+const findProviderMeta = (label: string) => {
+    const category = TOOL_NODES.find((category) => category.items.some((node) => node.name === label));
+    const item = category?.items.find((node) => node.name === label);
+    return {
+        category: category?.category ?? "custom",
+        item,
+        providerId: item?.id ?? null
+    };
+}
+
+const renderKVGrid = (pairs: Array<[string, React.ReactNode]>) => {
+    return (
+        <div className="grid grid-cols-2 gap-3 text-sm">
+            {pairs.map(([key, value]) => (
+                <div key={key}>
+                    <div className='text-gray-400'>{key}</div>
+                    <div className='text-white font-medium'>{value}</div>
+                </div>
+            ))}
+        </div>
+    )
 }
 
 
@@ -81,7 +108,13 @@ const Page = () => {
     }, [])
 
 
+    const handleTestWorkflow = useCallback(() => {
 
+    }, [])
+
+    const handleSaveWorkflow = useCallback(() => {
+
+    }, [])
 
     const onDrop = useCallback((event: React.DragEvent) => {
         event.preventDefault();
@@ -197,6 +230,7 @@ const Page = () => {
     }, [slug, configuredSteps, setNodes, setEdges]) // Added configuredSteps to deps
 
     if (!template && !slug) return <div className="p-6 text-white">Loading...</div>;
+
     return (
         <div className='flex h-full'>
             {/*left column - header and canvas*/}
@@ -219,8 +253,35 @@ const Page = () => {
                                         }
                                     </p>
                                 </div>
+
                                 <div className='flex items-center gap-3'>
                                     {/* Actions could go here */}
+                                    {
+                                        [{
+                                            icon: Play,
+                                            text: "Test",
+                                            variant: "outline",
+                                            onClick: handleTestWorkflow
+                                        },
+                                        {
+                                            icon: Save,
+                                            text: "Save",
+                                            variant: "default",
+                                            onClick: handleSaveWorkflow
+                                        }].map(({ icon: Icon, text, variant, onClick }) => (
+                                            <Button
+                                                key={text}
+                                                variant={variant as any}
+                                                onClick={onClick}
+                                                className={
+                                                    variant === "outline" ? "border-[#334155]  text-gray-300 hover:bg-[#1e293b] hover:text-white" : "bg-green-500 hover:bg-green-600 text-black font-medium"
+                                                }
+                                            >
+                                                <Icon className="w-4 h-4 mr-2" />
+                                                {text}
+                                            </Button>
+                                        ))
+                                    }
                                 </div>
                             </div>
                             {/*canvas controls */}
@@ -253,7 +314,148 @@ const Page = () => {
                     )
                 }
             </div>
-            <div className="w-80 border border-[#1E293B] p-4 overflow-y-auto"></div>
+            <div className="w-80 border border-[#1E293B] p-4 overflow-y-auto">
+                <Tabs defaultValue="nodes" className="w-full">
+                    <TabsList className="w-full grid grid-cols-2 bg-[#020617] p-1 rounded-lg border border-[#1E293B]">
+                        <TabsTrigger
+                            value="nodes"
+                            className='flex items-center justify-center py-2 text-sm font-medium text-slate-400 transition-all rounded-md data-[state=active]:bg-[#1E293B] data-[state=active]:text-green-400 hover:text-slate-200'
+                        >
+                            Nodes
+                        </TabsTrigger>
+                        <TabsTrigger
+                            value="properties"
+                            className='flex items-center justify-center py-2 text-sm font-medium text-slate-400 transition-all rounded-md data-[state=active]:bg-[#1E293B] data-[state=active]:text-green-400 hover:text-slate-200'
+                        >
+                            Properties
+                        </TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="nodes" className=''>
+                        {
+                            TOOL_NODES.map((category) => (
+                                <div
+                                    key={category.id}
+                                >
+                                    <h3 className='text-sm font-medium text-gray-400 uppercase tracking-wide mb-2 '>{category.category}</h3>
+                                    <div className="space-y-2 " >
+                                        {
+                                            category.items.map((node) => (
+                                                <div
+                                                    key={node.id}
+                                                    className='flex items-center p-2 rounded-md hover:bg-[#1e293b] cursor-grab transition-colors'
+                                                    draggable
+                                                    onDragStart={(e) => onDragStart(e, node)}
+                                                >
+                                                    <div className="w-8 h-8 rounded-md bg-[#1e293b] flex items-center justify-center mr-3">
+                                                        <node.icon className="w-6 h-6 text-green-400" />
+                                                    </div>
+                                                    <div>
+                                                        <p className='text-sm font-medium text-white'>
+                                                            {node.name}
+                                                        </p>
+                                                        <p className='text-xs text-gray-400'>
+                                                            {node.description}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
+                                </div>
+
+                            ))
+                        }
+                    </TabsContent>
+                    <TabsContent value="properties">
+                        {
+                            selectedNode ? (
+                                <div className="space-y-4">
+                                    <h3 className="text-lg font-medium text-white">Node Properties</h3>
+                                    <p className='text-gray-400'>Details for the selected node</p>
+                                    {
+                                        (
+                                            () => {
+                                                const d = selectedNode.data as any;
+                                                const label = d?.label ?? "";
+                                                const stepNumber = d?.stepNumber ?? null;
+                                                const { category, providerId } = findProviderMeta(label);
+
+                                                const isConfigured = typeof stepNumber === "number" ? !!configuredSteps[Number(stepNumber)] : false;
+                                                const accounts = providerId ? userConnections?.filter((c) => c?.platform === providerId) : [];
+
+                                                const info = [
+                                                    [
+                                                        "Name", label || "-"
+                                                    ],
+                                                    [
+                                                        "Step", stepNumber || "-"
+                                                    ],
+
+
+                                                    [
+                                                        "Configured", isConfigured ? "Yes" : "No"
+                                                    ]
+                                                ] as Array<[string, React.ReactNode]>;
+                                                const accountsContent = connLoading ? (
+                                                    <div className='text-gray-500 text-sm'>
+
+                                                    </div>
+
+
+                                                ) : providerId ? (
+                                                    accounts?.length > 0 ? (
+                                                        <ul className="space-y-2">
+                                                            {
+                                                                accounts?.map((acc) => {
+                                                                    return (<li key={acc.id} className='flex items-center justify-between ng-[#1e293b] rounded-md p-2 border border-[#334155]'>
+                                                                        <div>
+                                                                            <p className='text-sm font-medium text-gray-200'>
+                                                                                {acc.account_name}
+                                                                            </p>
+                                                                            <p className='text-xs text-gray-500'>
+                                                                                {acc.platform}
+                                                                            </p>
+                                                                        </div>
+                                                                    </li>)
+                                                                })
+                                                            }
+                                                        </ul>
+                                                    ) :
+                                                        (
+                                                            <div className='text-gray-500 text-sm'> No accounts connected for {providerId}</div>
+                                                        )
+                                                ) : (
+                                                    <div className='text-gray-500 text-sm'> This node doesn't require an external account</div>
+                                                )
+                                                return (
+                                                    <div className='space-y-3'>
+                                                        {renderKVGrid(info)}
+                                                        <div className="pt-2">
+                                                            <div className="mb-1 text-gray400">
+                                                                Connected Accounts
+                                                            </div>
+                                                            {
+                                                                accountsContent
+                                                            }
+                                                        </div>
+                                                    </div>
+
+                                                )
+                                            }
+                                        )()
+                                    }
+                                </div>
+                            ) : (
+                                <div className='flex items-center justify-center h-full py-8'>
+                                    <p className='text-gray-500 text-sm'> Please select a node to view its properties</p>
+                                </div>
+                            )
+                        }
+                    </TabsContent>
+                </Tabs>
+            </div>
+            {/*Configuration modal(double click a node to open) */}
+            {/* <NodeConfigurationModal /> */}
         </div>
     )
 }
